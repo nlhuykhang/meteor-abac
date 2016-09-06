@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Action-based access control for Meteor",
   "main": "./dist/index.js",
+
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "babel src --presets babel-preset-es2015 --out-dir dist",
@@ -22,6 +23,11 @@
   "devDependencies": {
     "babel-cli": "^6.14.0",
     "babel-preset-es2015": "^6.14.0",
+    "eslint": "^2.13.1",
+    "eslint-config-airbnb": "^10.0.1",
+    "eslint-plugin-import": "^1.14.0",
+    "eslint-plugin-jsx-a11y": "^1.5.5",
+    "eslint-plugin-react": "^5.2.2",
     "nodemon": "^1.10.2"
   },
   "dependencies": {}
