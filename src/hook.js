@@ -13,9 +13,7 @@ const hookMethods = function hookMethods() {
     for (const m in methods) {
       if (methods.hasOwnProperty(m)) {
         wrapMethods[m] = function wrapMethod(...v) {
-          console.log(m);
-          console.log(Meteor.userId());
-          return methods[m](...v);
+          return methods[m].bind(this)(...v);
         };
       }
     }
@@ -30,9 +28,11 @@ const hookPublish = function hookPublish() {
   console.log('hookPublish');
   const oldPublish = Meteor.publish;
 
-  const newPublish = function newPublish(...args) {
-    // console.log('newPublish');
-    return oldPublish(...args);
+  const newPublish = function newPublish(name, func) {
+    const wrapFunc = function wrapFunc(...args) {
+      return func.bind(this)(...args);
+    };
+    return oldPublish(name, wrapFunc);
   };
 
   Meteor.publish = newPublish;
@@ -42,6 +42,3 @@ export function hook() {
   hookMethods();
   hookPublish();
 }
-
-
-// ok so my wrapped function run prior to validatedmethod mixin
