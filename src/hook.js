@@ -13,6 +13,7 @@ const hookMethods = function hookMethods() {
     for (const m in methods) {
       if (methods.hasOwnProperty(m)) {
         wrapMethods[m] = function wrapMethod(...v) {
+          // check permissin here
           return methods[m].bind(this)(...v);
         };
       }
@@ -30,6 +31,7 @@ const hookPublish = function hookPublish() {
 
   const newPublish = function newPublish(name, func) {
     const wrapFunc = function wrapFunc(...args) {
+      // check permissin here
       return func.bind(this)(...args);
     };
     return oldPublish(name, wrapFunc);

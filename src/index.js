@@ -1,6 +1,6 @@
 import { hook } from './hook.js';
 
-import './roles.js';
+import { addRole, addUserToRole, removeUserFromRole } from './roles.js';
 
 export function init() {
   if (typeof Meteor === 'undefined') {
@@ -9,4 +9,16 @@ export function init() {
   }
 
   hook();
+
+  addRole({
+    name: 'sdf',
+  });
+}
+
+export function test(...args) {
+  return addUserToRole(...args);
+}
+
+export function test2(...args) {
+  return removeUserFromRole(...args);
 }
