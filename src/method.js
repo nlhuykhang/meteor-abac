@@ -29,3 +29,11 @@ export const removeMethod = function removeMethod(name) {
     name,
   });
 };
+
+export const doesMethodExist = function doesMethodExist(name) {
+  check(name, String);
+
+  return !!Method.findOne({
+    name,
+  });
+};

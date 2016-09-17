@@ -1,4 +1,14 @@
 /* global Meteor */
+import { Meteor } from 'meteor/meteor';
+
+// import { Method } from './method.js';
+// import { Publication as Pub } from './publication.js';
+
+import { doesMethodExist } from './method.js';
+
+import { doesPublicationExist } from './publication.js';
+
+import { canUserExecuteMethod } from './roles.js';
 
 const hookMethods = function hookMethods() {
   console.log('hookMethods');
@@ -13,7 +23,20 @@ const hookMethods = function hookMethods() {
     for (const m in methods) {
       if (methods.hasOwnProperty(m)) {
         wrapMethods[m] = function wrapMethod(...v) {
-          // check permissin here
+          const userId = Meteor.userId();
+
+          if (!doesMethodExist(m)) {
+            if (Meteor.isDevelopment) {
+              console.warn(`Meteor ABAC: method ${m} has not been checked`);
+            }
+          } else {
+            if (!canUserExecuteMethod(userId, m)) {
+              if (Meteor.isDevelopment) {
+                throw new Meteor.Error(403, `Do not have permission to execute ${m}`);
+              }
+              throw new Meteor.Error(403, 'Do not have permission');
+            }
+          }
           return methods[m].bind(this)(...v);
         };
       }

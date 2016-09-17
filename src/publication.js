@@ -29,3 +29,11 @@ export const removePublication = function removePublication(name) {
     name,
   });
 };
+
+export const doesPublicationExist = function doesPublicationExist(name) {
+  check(name, String);
+
+  return !!Publication.findOne({
+    name,
+  });
+};

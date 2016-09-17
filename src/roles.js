@@ -255,3 +255,43 @@ export const addComponentToRole = function addComponentToRole(roleNameOrId, comp
     },
   });
 };
+
+export const isUserInRole = function isUserInRole(userId, roles) {
+  check(userId, String);
+
+  check(roles, Match.OneOf(
+    String,
+    [String]
+  ));
+
+  let rs = roles;
+
+  if (isString(roles)) {
+    rs = [roles];
+  }
+
+  return UserInRole.find({
+    userId,
+    role: {
+      $in: rs,
+    },
+  }).count() > 0;
+};
+
+export const findRolesByMethod = function findRolebyMethod(methodName) {
+  return Role.find({
+    method: methodName,
+  }).fetch();
+};
+
+export const findRolesByPublication = function findRoleByPublication(pubName) {
+  return Role.find({
+    publication: pubName,
+  }).fetch();
+};
+
+export const canUserExecuteMethod = function canUserExecuteMethod(userId, method) {
+  const rolesCanDoOp = findRolesByMethod(method).map(obj => obj.name);
+
+  return isUserInRole(userId, rolesCanDoOp);
+};
