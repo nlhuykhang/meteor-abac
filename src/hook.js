@@ -8,7 +8,10 @@ import { doesMethodExist } from './method.js';
 
 import { doesPublicationExist } from './publication.js';
 
-import { canUserExecuteMethod } from './roles.js';
+import {
+  canUserExecuteMethod,
+  canUserSubscribePublication,
+} from './roles.js';
 
 const hookMethods = function hookMethods() {
   console.log('hookMethods');
@@ -54,7 +57,21 @@ const hookPublish = function hookPublish() {
 
   const newPublish = function newPublish(name, func) {
     const wrapFunc = function wrapFunc(...args) {
-      // check permissin here
+      const userId = this.userId;
+
+      if (!doesPublicationExist(name)) {
+        if (Meteor.isDevelopment) {
+          console.warn(`Meteor ABAC: publication ${name} has not been checked`);
+        }
+      } else {
+        if (!canUserSubscribePublication(userId, name)) {
+          if (Meteor.isDevelopment) {
+            throw new Meteor.Error(403, `Do not have permission to subscribe ${name}`);
+          }
+          throw new Meteor.Error(403, 'Do not have permission');
+        }
+      }
+
       return func.bind(this)(...args);
     };
     return oldPublish(name, wrapFunc);

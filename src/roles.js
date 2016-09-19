@@ -295,3 +295,9 @@ export const canUserExecuteMethod = function canUserExecuteMethod(userId, method
 
   return isUserInRole(userId, rolesCanDoOp);
 };
+
+export const canUserSubscribePublication = function canUserSubscribePublication(userId, pub) {
+  const rolesCanSubscribe = findRolesByPublication(pub).map(obj => obj.name);
+
+  return isUserInRole(userId, rolesCanSubscribe);
+};

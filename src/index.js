@@ -9,25 +9,15 @@ export function init() {
   }
 
   hook();
-
-  // addRole({
-  //   name: 'sdf',
-  // });
 }
-
-// export function test(...args) {
-//   return addUserToRole(...args);
-// }
-//
-// export function test2(...args) {
-//   return removeUserFromRole(...args);
-// }
 
 
 export { addMethod, removeMethod } from './method.js';
+export { addPublication, removePublication } from './publication.js';
 export {
   addRole,
   addUserToRole,
   removeUserFromRole,
   addMethodToRole,
+  addPublicationToRole,
 } from './roles.js';
