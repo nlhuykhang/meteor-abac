@@ -1,8 +1,4 @@
-/* global Meteor */
 import { Meteor } from 'meteor/meteor';
-
-// import { Method } from './method.js';
-// import { Publication as Pub } from './publication.js';
 
 import { doesMethodExist } from './method.js';
 

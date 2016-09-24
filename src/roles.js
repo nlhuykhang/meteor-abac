@@ -3,10 +3,53 @@ import { check, Match } from 'meteor/check';
 import { flatten } from 'ramda';
 import { Random } from 'meteor/random';
 
-const isString = val => Object.prototype.toString.call(val) === '[object String]';
+import { doesMethodExist } from './method.js';
+import { doesPublicationExist } from './publication.js';
 
 export const Role = new Mongo.Collection('meteor_abac_roles');
 export const UserInRole = new Mongo.Collection('meteor_abac_userinrole');
+
+const isString = val => Object.prototype.toString.call(val) === '[object String]';
+
+const doesRoleExist = function doesroleexist(role) {
+  return !!Role.findOne({
+    name: role,
+  });
+};
+
+const isUserInRole = function isUserInRole(userId, roles) {
+  check(userId, String);
+
+  check(roles, Match.OneOf(
+    String,
+    [String]
+  ));
+
+  let rs = roles;
+
+  if (isString(roles)) {
+    rs = [roles];
+  }
+
+  return UserInRole.find({
+    userId,
+    role: {
+      $in: rs,
+    },
+  }).count() > 0;
+};
+
+const findRolesByMethod = function findRolesByMethod(methodName) {
+  return Role.find({
+    method: methodName,
+  }).fetch();
+};
+
+const findRolesByPublication = function findRolesByPublication(pubName) {
+  return Role.find({
+    publication: pubName,
+  }).fetch();
+};
 
 export const addUserToRole = function addUserToRole(userIds, roles) {
   check(userIds, Match.OneOf(
@@ -29,6 +72,12 @@ export const addUserToRole = function addUserToRole(userIds, roles) {
   if (isString(roles)) {
     rs = [roles];
   }
+
+  rs.forEach(r => {
+    if (!doesRoleExist(r)) {
+      throw new Meteor.Error('not-existed', `Role ${r} does not exist`);
+    }
+  });
 
   const userInRoles = uids.map(userId => {
     return rs.map(role => ({
@@ -185,6 +234,16 @@ export const addMethodToRole = function addMethodToRole(roleNameOrId, methods) {
     m = [methods];
   }
 
+  if (!doesRoleExist(roleNameOrId)) {
+    throw new Meteor.Error('not-existed', `Role ${roleNameOrId} does not eixst`);
+  }
+
+  m.forEach(obj => {
+    if (!doesMethodExist(obj)) {
+      throw new Meteor.Error('not-existed', `Method ${m} does not exist`);
+    }
+  });
+
   Role.update({
     $or: [{
       _id: roleNameOrId,
@@ -212,6 +271,16 @@ export const addPublicationToRole = function addPublicationToRole(roleNameOrId, 
   if (isString(pub)) {
     m = [pub];
   }
+
+  if (!doesRoleExist(roleNameOrId)) {
+    throw new Meteor.Error('not-existed', `Role ${roleNameOrId} does not eixst`);
+  }
+
+  m.forEach(obj => {
+    if (!doesPublicationExist(obj)) {
+      throw new Meteor.Error('not-existed', `Publication ${m} does not exist`);
+    }
+  });
 
   Role.update({
     $or: [{
@@ -241,6 +310,10 @@ export const addComponentToRole = function addComponentToRole(roleNameOrId, comp
     m = [component];
   }
 
+  if (!doesRoleExist(roleNameOrId)) {
+    throw new Meteor.Error('not-existed', `Role ${roleNameOrId} does not eixst`);
+  }
+
   Role.update({
     $or: [{
       _id: roleNameOrId,
@@ -254,40 +327,6 @@ export const addComponentToRole = function addComponentToRole(roleNameOrId, comp
       },
     },
   });
-};
-
-export const isUserInRole = function isUserInRole(userId, roles) {
-  check(userId, String);
-
-  check(roles, Match.OneOf(
-    String,
-    [String]
-  ));
-
-  let rs = roles;
-
-  if (isString(roles)) {
-    rs = [roles];
-  }
-
-  return UserInRole.find({
-    userId,
-    role: {
-      $in: rs,
-    },
-  }).count() > 0;
-};
-
-export const findRolesByMethod = function findRolebyMethod(methodName) {
-  return Role.find({
-    method: methodName,
-  }).fetch();
-};
-
-export const findRolesByPublication = function findRoleByPublication(pubName) {
-  return Role.find({
-    publication: pubName,
-  }).fetch();
 };
 
 export const canUserExecuteMethod = function canUserExecuteMethod(userId, method) {
