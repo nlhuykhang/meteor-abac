@@ -28,6 +28,7 @@
     "eslint-plugin-import": "^1.14.0",
     "eslint-plugin-jsx-a11y": "^1.5.5",
     "eslint-plugin-react": "^5.2.2",
+    "flow-bin": "^0.32.0",
     "nodemon": "^1.10.2"
   },
   "dependencies": {
