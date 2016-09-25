@@ -1,7 +1,7 @@
 // import { Mongo } from 'meteor/mongo';
 // import { check, Match } from 'meteor/check';
 import { flatten } from 'ramda';
-// import { Random } from 'meteor/random';
+import { id } from './random.js';
 
 import { doesMethodExist } from './method.js';
 import { doesPublicationExist } from './publication.js';
@@ -99,7 +99,7 @@ export const addUserToRole = function addUserToRole(userIds, roles) {
 
     filterList.forEach(uir => {
       bulk.insert({
-        _id: Random.id(),
+        _id: id(),
         ...uir,
         createdAt: now,
         modifiedAt: now,

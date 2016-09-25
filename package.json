@@ -1,6 +1,6 @@
 {
   "name": "meteor-abac",
-  "version": "1.0.10",
+  "version": "1.0.15",
   "description": "Action-based access control for Meteor",
   "main": "./dist/index.js",
   "scripts": {
