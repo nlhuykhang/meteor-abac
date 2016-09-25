@@ -7,6 +7,7 @@ export const addMethod = function addMethod(method) {
   check(method, {
     name: String,
     desc: Match.Optional(String),
+    isPublished: Match.Optional(Boolean),
   });
 
   const now = new Date();
@@ -15,6 +16,7 @@ export const addMethod = function addMethod(method) {
     name: method.name,
   }, {
     $set: {
+      isPublished: false, // default to be false
       ...method,
       createdAt: now,
       modifiedAt: now,
@@ -36,4 +38,14 @@ export const doesMethodExist = function doesMethodExist(name) {
   return !!Method.findOne({
     name,
   });
+};
+
+export const isMethodPublished = function isMethodPublished(name) {
+  check(name, String);
+
+  const m = Method.findOne({
+    name,
+  });
+
+  return m && m.isPublished;
 };

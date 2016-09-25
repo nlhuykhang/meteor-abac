@@ -1,8 +1,14 @@
 import { Meteor } from 'meteor/meteor';
 
-import { doesMethodExist } from './method.js';
+import {
+  doesMethodExist,
+  isMethodPublished,
+} from './method.js';
 
-import { doesPublicationExist } from './publication.js';
+import {
+  doesPublicationExist,
+  isPublicationPublished,
+} from './publication.js';
 
 import {
   canUserExecuteMethod,
@@ -29,7 +35,10 @@ const hookMethods = function hookMethods() {
               console.warn(`Meteor ABAC: method ${m} has not been checked`);
             }
           } else {
-            if (!canUserExecuteMethod(userId, m)) {
+            if (
+              !isMethodPublished(m) &&
+              !canUserExecuteMethod(userId, m)
+            ) {
               if (Meteor.isDevelopment) {
                 throw new Meteor.Error(403, `Do not have permission to execute ${m}`);
               }
@@ -60,8 +69,12 @@ const hookPublish = function hookPublish() {
           console.warn(`Meteor ABAC: publication ${name} has not been checked`);
         }
       } else {
-        if (!canUserSubscribePublication(userId, name)) {
+        if (
+          !isPublicationPublished(name) &&
+          !canUserSubscribePublication(userId, name)
+        ) {
           if (Meteor.isDevelopment) {
+            console.error(`Do not have permission to subscribe ${name}`);
             throw new Meteor.Error(403, `Do not have permission to subscribe ${name}`);
           }
           throw new Meteor.Error(403, 'Do not have permission');

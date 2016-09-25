@@ -7,6 +7,7 @@ export const addPublication = function addPublication(pub) {
   check(pub, {
     name: String,
     desc: Match.Optional(String),
+    isPublished: Match.Optional(Boolean),
   });
 
   const now = new Date();
@@ -15,6 +16,7 @@ export const addPublication = function addPublication(pub) {
     name: pub.name,
   }, {
     $set: {
+      isPublished: false,  // default to be false
       ...pub,
       createdAt: now,
       modifiedAt: now,
@@ -36,4 +38,14 @@ export const doesPublicationExist = function doesPublicationExist(name) {
   return !!Publication.findOne({
     name,
   });
+};
+
+export const isPublicationPublished = function isPublicationPublished(name) {
+  check(name, String);
+
+  const p = Publication.findOne({
+    name,
+  });
+
+  return p && p.isPublished;
 };

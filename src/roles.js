@@ -18,7 +18,10 @@ const doesRoleExist = function doesroleexist(role) {
 };
 
 const isUserInRole = function isUserInRole(userId, roles) {
-  check(userId, String);
+  check(userId, Match.OneOf(
+    String,
+    null,
+  ));
 
   check(roles, Match.OneOf(
     String,
