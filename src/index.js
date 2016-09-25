@@ -1,6 +1,6 @@
 import { hook } from './hook.js';
 
-import './publication.js';
+import './ensureIndex.js';
 
 export function init() {
   if (typeof Meteor === 'undefined') {
