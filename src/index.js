@@ -1,5 +1,4 @@
 import { hook } from './hook.js';
-
 import './ensureIndex.js';
 
 export function init() {
